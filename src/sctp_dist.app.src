@@ -1,5 +1,5 @@
 {application, sctp_dist,
- [{description, "An OTP library"},
+ [{description, "SCTP based distribution protocol"},
   {vsn, "0.1.0"},
   {registered, []},
   {applications,
