@@ -1,42 +1,4 @@
-%%
-%% %CopyrightBegin%
-%% 
-%% Copyright Ericsson AB 2017. All Rights Reserved.
-%% 
-%% Licensed under the Apache License, Version 2.0 (the "License");
-%% you may not use this file except in compliance with the License.
-%% You may obtain a copy of the License at
-%%
-%%     http://www.apache.org/licenses/LICENSE-2.0
-%%
-%% Unless required by applicable law or agreed to in writing, software
-%% distributed under the License is distributed on an "AS IS" BASIS,
-%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-%% See the License for the specific language governing permissions and
-%% limitations under the License.
-%% 
-%% %CopyrightEnd%
-%%
 -module(gen_sctp_dist).
-
-%%
-%% This is an example of how to plug in an arbitrary distribution
-%% carrier for Erlang using distribution processes.
-%%
-%% This example uses gen_tcp for transportation of data, but
-%% you can use whatever underlying protocol you want as long
-%% as your implementation reliably delivers data chunks to the
-%% receiving VM in the order they were sent from the sending
-%% VM.
-%%
-%% This code is a rewrite of the lib/kernel/src/inet_tcp_dist.erl
-%% distribution impementation for TCP used by default. That
-%% implementation use distribution ports instead of distribution
-%% processes and is more efficient compared to this implementation.
-%% This since this implementation more or less gets the
-%% distribution processes in between the VM and the ports without
-%% any gain specific gain.
-%%
 
 -export([listen/1, accept/1, accept_connection/5,
 	 setup/5, close/1, select/1, is_node_name/1]).
@@ -426,14 +388,14 @@ hs_data_common(DistCtrl) ->
 %%
 %% There will be five parties working together when the
 %% connection is up:
-%% - The gen_tcp socket. Providing a tcp/ip connection
+%% - The gen_sctp socket. Providing a sctp/ip connection
 %%   to the other node.
 %% - The output handler. It will dispatch all outgoing
-%%   traffic from the VM to the gen_tcp socket. This
+%%   traffic from the VM to the gen_sctp socket. This
 %%   process is registered as distribution controller
 %%   for this channel with the VM.
 %% - The input handler. It will dispatch all incoming
-%%   traffic from the gen_tcp socket to the VM. This
+%%   traffic from the gen_sctp socket to the VM. This
 %%   process is also the socket owner and receives
 %%   incoming traffic using active-N.
 %% - The tick handler. Dispatches asynchronous tick
@@ -567,7 +529,7 @@ call_ctrlr(Ctrlr, Msg) ->
 %% We are not allowed to block the connection
 %% superviser when writing a tick and we also want
 %% the tick to go through even during a heavily
-%% loaded system. gen_tcp does not have a
+%% loaded system. gen_sctp does not have a
 %% non-blocking send operation exposed in its API
 %% and we don't want to run the distribution
 %% controller under high priority. Therefore this
